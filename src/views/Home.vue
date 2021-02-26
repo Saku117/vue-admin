@@ -9,11 +9,9 @@
 <script>
   import { computed, onMounted, onUnmounted, reactive } from "vue";
   // @ is an alias to /src
-  import ModelButton from "../components/ModelButton";
   export default {
     name: "Home",
     components:{
-      ModelButton
     },
     setup() {
       const data = reactive({

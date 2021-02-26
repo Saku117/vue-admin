@@ -1,22 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-
-const routes = [
-  {
-    path: '/',
-    redirect: '/login'
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue')
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    component: () => import('../views/Home.vue')
-  },
-
-]
+import routes from './static.js'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -24,6 +7,4 @@ const router = createRouter({
 })
 
 //动态路由
-
-
 export default router

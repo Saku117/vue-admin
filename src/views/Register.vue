@@ -1,20 +1,24 @@
 <template>
-  <el-form :model="userForm" :rules="rules" class="login-form">
-    <h3>管理员登录</h3>
+  <el-form :model="registerForm" :rules="rules" class="login-form">
+    <h3>注册页面</h3>
     <el-form-item label="账号" prop="name">
-      <el-input v-model="userForm.name" auto-complete="off"></el-input>
+      <el-input v-model="registerForm.name" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">
       <el-input
         type="password"
-        v-model="userForm.password"
+        v-model="registerForm.password"
+        auto-complete="off"
+      ></el-input>
+    </el-form-item>
+    <el-form-item label="再次输入密码" prop="password">
+      <el-input
+        type="password"
+        v-model="registerForm.verifPassword"
         auto-complete="off"
       ></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click.once="login()" class="login-btn">
-        登录
-      </el-button>
       <el-button @click="register()" class="register-btn">
         注册
       </el-button>
@@ -24,31 +28,36 @@
 
 <script>
   import { reactive } from "vue";
+  import { ElMessage } from "element-plus";
+
   import api from "../api";
   import { useRouter } from "vue-router";
   export default {
     setup() {
-      const userForm = reactive({
+      const registerForm = reactive({
         name: "",
         password: "",
+        verifPassword: "",
       });
       const router = useRouter();
 
-      async function login() {
-        let { name, password } = userForm;
-        if (!!name && !!password) {
-          const resp = await api.user.Login(name, password);
-          if (resp.data.status === 200) {
-            router.push("/home");
-          }
+      async function register() {
+        let { name, password, verifPassword } = registerForm;
+        if (password !== verifPassword) {
+          ElMessage({
+            message: `两次输入密码不相同`,
+            type: "error",
+          });
+          return false;
         }
-      }
-
-      function register() {
-        const register = router.resolve({
-          path: "/register",
-        });
-        window.open(register.href, "_blank");
+        const resp = await api.user.register(name, password);
+        if (resp.data.status === 200) {
+          ElMessage({
+            message: `注册成功`,
+            type: "success",
+          });
+          router.push('/login')
+        }
       }
 
       var checkName = (rule, value, callback) => {
@@ -63,8 +72,7 @@
       };
 
       return {
-        userForm,
-        login,
+        registerForm,
         register,
 
         rules: {
